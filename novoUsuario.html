@@ -1,0 +1,72 @@
+<script src="js/jquery-1.11.2.min.js"></script>
+<script> 
+    $(function(){
+      $("#cab").load("cab.html"); 
+    });
+</script>
+
+<div id="cab"></div>
+<div style="width:50%;margin-right:auto;margin-left:auto">
+<form>
+  <div class="form-group">
+    <label for="nome">Razao Social/Fantasia</label>
+    <input type="text" class="form-control" id="nome" placeholder="Nome da sua empresa">
+  </div>
+  <div class="form-group">
+    <label for="email">E-mail</label>
+    <input type="email" class="form-control" id="email" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label for="senha">Senha</label>
+    <input type="password" class="form-control" id="senha" placeholder="Senha">
+  </div>
+  <div class="form-group">
+    <label for="logo">Logo</label>
+    <input type="file" id="logo">
+    <p class="help-block">Logo da sua empresa.</p>
+  </div>
+<!--  <div class="checkbox">
+    <label>
+      <input type="checkbox"> Check me out
+    </label>
+  </div>-->
+<button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
+</form>
+</div>    
+<div id="rod"></div>
+
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script>
+    function cadastrar(){
+        var ref = new Firebase("https://nasuakz.firebaseio.com/");
+        var nome = $("#nome").val().split(" ");
+        nome = nome[0];
+        ref.child("fornecedores").push({
+                nome:{
+                    email: $("#email").val(),
+                    logo: nome+".jpg",
+                    nome: $("#nome").val()
+                }
+            },function(error) {
+                if (error) {
+                  alert("Nao foi possivel salvar: " + error);
+                } else {
+                    ref.createUser({
+                        email    : $("#email").val(),
+                        password : $("#senha").val()
+                      }, function(error, userData) {
+                            if (error) {
+                              alert("Nao foi possivel cadastrar: "+error);
+                            } else {
+                              alert("Seus dados foram salvos!: "+userData.uid);
+                            }
+                    });
+                }
+        });
+    }
+</script>
+<script> 
+    $(function(){
+      $("#rod").load("rod.html"); 
+    });
+</script>

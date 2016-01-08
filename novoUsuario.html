@@ -38,28 +38,31 @@
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
     function cadastrar(){
+        $("#load").css("display","block");
         var ref = new Firebase("https://nasuakz.firebaseio.com/");
-        var nome = $("#nome").val().split(" ");
+        var nome = $("#nome").val().split(" ")[0];
         nome = nome[0];
-        ref.child("fornecedores").push({
-                nome:{
-                    email: $("#email").val(),
-                    logo: nome+".jpg",
-                    nome: $("#nome").val()
-                }
-            },function(error) {
+        ref.createUser({
+                email    : $("#email").val(),
+                password : $("#senha").val()
+            }, function(error, userData) {
                 if (error) {
-                  alert("Nao foi possivel salvar: " + error);
+                    $("#load").css("display","none");
+                    alert("Nao foi possivel salvar: "+error);
                 } else {
-                    ref.createUser({
-                        email    : $("#email").val(),
-                        password : $("#senha").val()
-                      }, function(error, userData) {
-                            if (error) {
-                              alert("Nao foi possivel cadastrar: "+error);
-                            } else {
-                              alert("Seus dados foram salvos!: "+userData.uid);
-                            }
+                    ref.child("fornecedores").push({
+                        [userData.uid]:{
+                            email: $("#email").val(),
+                            logo: nome+".jpg",
+                            nome: $("#nome").val()
+                        }
+                    },function(error) {
+                        $("#load").css("display","none");
+                        if (error) {
+                          alert("Nao foi possivel salvar: " + error);
+                        } else {
+                            alert("Seus dados foram salvos!: "+userData.uid);
+                        }
                     });
                 }
         });

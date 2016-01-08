@@ -27,12 +27,13 @@
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
     function login(){
+        $("#load").css("display","block");
         var ref = new Firebase("https://nasuakz.firebaseio.com/");
         function authHandler(error, authData) {
+          $("#load").css("display","none");
           if (error) {
-            alert("Usuário ou senha inválidos! "+error);
-          } else {
-            
+            alert("Usuário ou senha inválidos: "+error);
+          } else {            
             //alert("Authenticated successfully with payload: "+authData);
           }
         }

@@ -50,12 +50,10 @@
                     $("#load").css("display","none");
                     alert("Nao foi possivel salvar: "+error);
                 } else {
-                    ref.child("fornecedores").push({
-                        [userData.uid]:{
-                            email: $("#email").val(),
-                            logo: nome+".jpg",
-                            nome: $("#nome").val()
-                        }
+                    ref.child("fornecedores").child(userData.uid).set({
+                        email: $("#email").val(),
+                        logo: nome+".jpg",
+                        nome: $("#nome").val()
                     },function(error) {
                         $("#load").css("display","none");
                         if (error) {

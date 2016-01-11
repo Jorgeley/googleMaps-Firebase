@@ -1,8 +1,43 @@
 <script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/jquery.Jcrop.js"></script>
+<script src="js/ajax.js"></script>
 <script> 
     $(function(){
       $("#cab").load("cab.html"); 
     });
+    function envia(){
+        $.ajax({
+                type: 'POST',
+                url: 'upload.php',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: new FormData($('#formularioUpload').get(0)),
+                success: function(data){
+                    $("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val());
+                    $('#img').attr('value', $('#logo').attr('src'));
+                    jcropia();
+                }
+            });
+    }
+    function jcropia(){
+        $('#logo').Jcrop({
+                        onChange: coordenadas,
+                        minSize: [144,144],
+                        aspectRatio: 144/144,
+                        setSelect: [50,50,100,100],
+                        bgColor: 'transparent'
+                    });
+    }
+    /*window.onload=function(){*/
+        function coordenadas(c){
+            $('#x').val(Math.round(c.x));
+            $('#y').val(Math.round(c.y));
+            $('#w').val(Math.round(c.w));
+            $('#h').val(Math.round(c.h));
+            $('#coordenadas').html(Math.round(c.w)+' X '+Math.round(c.h));
+        };
+    /*}*/
 </script>
 
 <div id="cab"></div>
@@ -22,8 +57,10 @@
   </div>
   <div class="form-group">
     <label for="logo">Logo</label>
-    <input type="file" id="logo">
+      
+      <a href="#" onClick="$('#arquivoLogo').click();" id="addLogo">+adicionar logo</a>
     <p class="help-block">Logo da sua empresa.</p>
+
   </div>
 <!--  <div class="checkbox">
     <label>
@@ -31,7 +68,29 @@
     </label>
   </div>-->
 <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
-</form>
+</form>    
+      
+      <div id="coordenadas" style="width:100px;font-size:18px;font-weight:bolder;margin-left:30%;border:1px solid yellow;"></div>
+    <form id="formularioRecorte" method="post" action="upload.php?recorta">
+        <input type="button" value="finalizar recorte" onclick="$.ajax({
+                                                                        type: 'POST',
+                                                                        url: 'upload.php?recorta',
+                                                                        data: $('#formularioRecorte'),
+                                                                        success: function(data){ alert('x'); $('#logo').attr('src', $('#logo').attr('src')); $('.container').html(data); }
+                                                                    });">
+        <input type="hidden" name="img" />
+        <input type="hidden" id="x" name="x0" />
+        <input type="hidden" id="y" name="y0" />
+        <input type="hidden" id="w" name="w0" />
+        <input type="hidden" id="h" name="h0" />
+        <div style="float:left;margin-right:30px">
+            <img src="" id="logo">
+        </div>
+    </form>
+      
+      <form action="upload.php" enctype="multipart/form-data" method="post" id="formularioUpload">        
+        <input type="file" id="arquivoLogo" name="arquivoLogo" onchange="envia();" style="visibility:hidden">
+      </form>      
 </div>    
 <div id="rod"></div>
 

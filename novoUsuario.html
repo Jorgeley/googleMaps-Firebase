@@ -14,11 +14,15 @@
                 processData: false,
                 data: new FormData($('#formularioUpload').get(0)),
                 success: function(data){
-                    $("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val());
-                    $('#img').attr('value', $('#logo').attr('src'));
+                    atualiza();
                     jcropia();
                 }
             });
+    }
+    function atualiza(){
+        $('#jcrop').html("<img src='' id='logo'>");
+        $("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val()+"?"+Math.random());
+        $('#imgLogo').attr('value', "img/logo/"+$("#arquivoLogo").val());
     }
     function jcropia(){
         $('#logo').Jcrop({
@@ -27,7 +31,7 @@
                         aspectRatio: 144/144,
                         setSelect: [50,50,100,100],
                         bgColor: 'transparent'
-                    });
+                    });        
     }
     /*window.onload=function(){*/
         function coordenadas(c){
@@ -67,7 +71,6 @@
       <input type="checkbox"> Check me out
     </label>
   </div>-->
-<button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
 </form>    
       
       <div id="coordenadas" style="width:100px;font-size:18px;font-weight:bolder;margin-left:30%;border:1px solid yellow;"></div>
@@ -75,22 +78,27 @@
         <input type="button" value="finalizar recorte" onclick="$.ajax({
                                                                         type: 'POST',
                                                                         url: 'upload.php?recorta',
-                                                                        data: $('#formularioRecorte'),
-                                                                        success: function(data){ alert('x'); $('#logo').attr('src', $('#logo').attr('src')); $('.container').html(data); }
+                                                                        processData: false,
+                                                                        contentType: false,
+                                                                        data:  new FormData($('#formularioRecorte').get(0)),
+                                                                        success: function(data){
+                                                                            atualiza();
+                                                                        }
                                                                     });">
-        <input type="hidden" name="img" />
+        <input type="hidden" name="imgLogo" id="imgLogo" />
         <input type="hidden" id="x" name="x0" />
         <input type="hidden" id="y" name="y0" />
         <input type="hidden" id="w" name="w0" />
         <input type="hidden" id="h" name="h0" />
-        <div style="float:left;margin-right:30px">
+        <div id="jcrop" style="float:left;margin-right:30px">
             <img src="" id="logo">
         </div>
     </form>
       
       <form action="upload.php" enctype="multipart/form-data" method="post" id="formularioUpload">        
         <input type="file" id="arquivoLogo" name="arquivoLogo" onchange="envia();" style="visibility:hidden">
-      </form>      
+      </form>
+      <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
 </div>    
 <div id="rod"></div>
 

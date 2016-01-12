@@ -27,8 +27,8 @@
     function jcropia(){
         $('#logo').Jcrop({
                         onChange: coordenadas,
-                        minSize: [144,144],
-                        aspectRatio: 144/144,
+                        minSize: [288,288],
+                        aspectRatio: 288/288,
                         setSelect: [50,50,100,100],
                         bgColor: 'transparent'
                     });        
@@ -119,14 +119,14 @@
                 } else {
                     ref.child("fornecedores").child(userData.uid).set({
                         email: $("#email").val(),
-                        logo: nome+".jpg",
+                        logo: $("#imgLogo").attr("value"),
                         nome: $("#nome").val()
                     },function(error) {
                         $("#load").css("display","none");
                         if (error) {
-                          alert("Nao foi possivel salvar: " + error);
+                          alert("Nao foi possivel salvar. Erro: " + error);
                         } else {
-                            alert("Seus dados foram salvos!: "+userData.uid);
+                            alert("Seus dados foram salvos!");
                         }
                     });
                 }

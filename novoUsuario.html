@@ -87,7 +87,8 @@ function recorta(){
                 contentType: false,
                 data:  new FormData($('#formularioRecorte').get(0)),
                 success: function(data){
-                		atualiza();
+				$('#jcrop').html("<img src='' id='logo'>");
+                		$("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val().replace(/ /g, "").toLowerCase()+"?"+Math.random());
                         }
         });
 	$("#load").css("display","none");
@@ -128,7 +129,7 @@ function recorta(){
                 } else {
                     ref.child("fornecedores").child(userData.uid).set({
                         email: $("#email").val(),
-                        logo: $("#arquivoLogo").val(),
+                        logo: $("#arquivoLogo").val().replace(/ /g,"").toLowerCase(),
                         nome: $("#nome").val()
                     },function(error) {
                         $("#load").css("display","none");

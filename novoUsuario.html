@@ -13,9 +13,13 @@
                 contentType: false,
                 processData: false,
                 data: new FormData($('#formularioUpload').get(0)),
+		beforeSend: function( xhr ) {
+			$("#load").css("display","block");
+		},
                 success: function(data){
                     atualiza();
                     jcropia();
+		    $("#load").css("display","none");
                 }
             });
     }
@@ -39,7 +43,6 @@
             $('#y').val(Math.round(c.y));
             $('#w').val(Math.round(c.w));
             $('#h').val(Math.round(c.h));
-            $('#coordenadas').html(Math.round(c.w)+' X '+Math.round(c.h));
         };
     /*}*/
 </script>
@@ -73,18 +76,25 @@
   </div>-->
 </form>    
       
-      <div id="coordenadas" style="width:100px;font-size:18px;font-weight:bolder;margin-left:30%;border:1px solid yellow;"></div>
     <form id="formularioRecorte" method="post" action="upload.php?recorta">
-        <input type="button" value="finalizar recorte" onclick="$.ajax({
-                                                                        type: 'POST',
-                                                                        url: 'upload.php?recorta',
-                                                                        processData: false,
-                                                                        contentType: false,
-                                                                        data:  new FormData($('#formularioRecorte').get(0)),
-                                                                        success: function(data){
-                                                                            atualiza();
-                                                                        }
-                                                                    });">
+<script>
+function recorta(){
+	$("#load").css("display","block");
+	$.ajax({
+        	type: 'POST',
+                url: 'upload.php?recorta',
+                processData: false,
+                contentType: false,
+                data:  new FormData($('#formularioRecorte').get(0)),
+                success: function(data){
+				$('#jcrop').html("<img src='' id='logo'>");
+                		$("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val().replace(/ /g, "").toLowerCase()+"?"+Math.random());
+                        }
+        });
+	$("#load").css("display","none");
+}
+</script>
+        <input type="button" value="finalizar recorte" onclick="recorta();">
         <input type="hidden" name="imgLogo" id="imgLogo" />
         <input type="hidden" id="x" name="x0" />
         <input type="hidden" id="y" name="y0" />
@@ -119,7 +129,7 @@
                 } else {
                     ref.child("fornecedores").child(userData.uid).set({
                         email: $("#email").val(),
-                        logo: $("#arquivoLogo").val(),
+                        logo: $("#arquivoLogo").val().replace(/ /g,"").toLowerCase(),
                         nome: $("#nome").val()
                     },function(error) {
                         $("#load").css("display","none");

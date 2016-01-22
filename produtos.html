@@ -1,0 +1,35 @@
+<script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/ajax.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bs_grid_demo.css">
+<link rel="stylesheet" type="text/css" href="/labs/bs_grid/demo/index.css">
+<script src="/labs/bundled/js/bs_grid_demo.js" type="text/javascript"></script>
+<script type="text/javascript" src="/labs/bs_grid/demo/index.js"></script>
+<script> 
+    $(function(){
+      $("#cab").load("cab.html"); 
+    });
+</script>
+<div id="cab"></div>
+
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script>
+    var ref = new Firebase("https://nasuakz.firebaseio.com/");
+    var authData = ref.getAuth();
+    if (authData) {
+</script>
+
+
+<script>
+    } else {
+      console.log("User is logged out");
+    }
+</script>
+
+<div id="grid"></div>
+
+<div id="rod"></div>
+<script> 
+    $(function(){
+      $("#rod").load("rod.html"); 
+    });
+</script>

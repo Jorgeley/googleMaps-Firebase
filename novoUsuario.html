@@ -1,150 +1,155 @@
-<script src="js/jquery-1.11.2.min.js"></script>
-<script src="js/jquery.Jcrop.js"></script>
-<script src="js/ajax.js"></script>
-<script> 
-    $(function(){
-      $("#cab").load("cab.html"); 
-    });
-    function envia(){
-        $.ajax({
-                type: 'POST',
-                url: 'upload.php',
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: new FormData($('#formularioUpload').get(0)),
-		beforeSend: function( xhr ) {
-			$("#load").css("display","block");
-		},
-                success: function(data){
-                    atualiza();
-                    jcropia();
-		    $("#load").css("display","none");
-                }
-            });
-    }
-    function atualiza(){
-        $('#jcrop').html("<img src='' id='logo'>");
-        $("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val()+"?"+Math.random());
-        $('#imgLogo').attr('value', "img/logo/"+$("#arquivoLogo").val());
-    }
-    function jcropia(){
-        $('#logo').Jcrop({
-                        onChange: coordenadas,
-                        minSize: [288,288],
-                        aspectRatio: 288/288,
-                        setSelect: [50,50,100,100],
-                        bgColor: 'transparent'
-                    });        
-    }
-    /*window.onload=function(){*/
-        function coordenadas(c){
-            $('#x').val(Math.round(c.x));
-            $('#y').val(Math.round(c.y));
-            $('#w').val(Math.round(c.w));
-            $('#h').val(Math.round(c.h));
-        };
-    /*}*/
-</script>
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="bootstrap-3.3.6/favicon.ico">
+        <title>NaSuaKZ-0.1(beta)</title>
+        <link href="bootstrap-3.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body onload="cabecalhoRodape();">
 
-<div id="cab"></div>
-<div style="width:50%;margin-right:auto;margin-left:auto">
-<form>
-  <div class="form-group">
-    <label for="nome">Razao Social/Fantasia</label>
-    <input type="text" class="form-control" id="nome" placeholder="Nome da sua empresa">
-  </div>
-  <div class="form-group">
-    <label for="email">E-mail</label>
-    <input type="email" class="form-control" id="email" placeholder="Email">
-  </div>
-  <div class="form-group">
-    <label for="senha">Senha</label>
-    <input type="password" class="form-control" id="senha" placeholder="Senha">
-  </div>
-  <div class="form-group">
-    <label for="logo">Logo</label>
-      
-      <a href="#" onClick="$('#arquivoLogo').click();" id="addLogo">+adicionar logo</a>
-    <p class="help-block">Logo da sua empresa.</p>
+        <div id="cab"></div>
+        <div style="width:50%;margin-right:auto;margin-left:auto">
+            <form>
+                <div class="form-group">
+                    <label for="nome">Razao Social/Fantasia</label>
+                    <input type="text" class="form-control" id="nome" placeholder="Nome da sua empresa">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" class="form-control" id="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" class="form-control" id="senha" placeholder="Senha">
+                </div>
+                <div class="form-group">
+                    <label for="logo">Logo</label>
 
-  </div>
-<!--  <div class="checkbox">
-    <label>
-      <input type="checkbox"> Check me out
-    </label>
-  </div>-->
-</form>    
-      
-    <form id="formularioRecorte" method="post" action="upload.php?recorta">
-<script>
-function recorta(){
-	$("#load").css("display","block");
-	$.ajax({
-        	type: 'POST',
-                url: 'upload.php?recorta',
-                processData: false,
-                contentType: false,
-                data:  new FormData($('#formularioRecorte').get(0)),
-                success: function(data){
-				$('#jcrop').html("<img src='' id='logo'>");
-                		$("#logo").attr("src", "img/logo/"+$("#arquivoLogo").val().replace(/ /g, "").toLowerCase()+"?"+Math.random());
-                        }
-        });
-	$("#load").css("display","none");
-}
-</script>
-        <input type="button" value="finalizar recorte" onclick="recorta();">
-        <input type="hidden" name="imgLogo" id="imgLogo" />
-        <input type="hidden" id="x" name="x0" />
-        <input type="hidden" id="y" name="y0" />
-        <input type="hidden" id="w" name="w0" />
-        <input type="hidden" id="h" name="h0" />
-        <div id="jcrop" style="float:left;margin-right:30px">
-            <img src="" id="logo">
-        </div>
-    </form>
-      
-      <form action="upload.php" enctype="multipart/form-data" method="post" id="formularioUpload">        
-        <input type="file" id="arquivoLogo" name="arquivoLogo" onchange="envia();" style="visibility:hidden">
-      </form>
-      <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
-</div>    
-<div id="rod"></div>
+                    <a href="#" onClick="$('#arquivoLogo').click();" id="addLogo">+adicionar logo</a>
+                    <p class="help-block">Logo da sua empresa.</p>
 
-<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
-<script>
-    function cadastrar(){
-        $("#load").css("display","block");
-        var ref = new Firebase("https://nasuakz.firebaseio.com/");
-        var nome = $("#nome").val().split(" ")[0];
-        nome = nome[0];
-        ref.createUser({
-                email    : $("#email").val(),
-                password : $("#senha").val()
-            }, function(error, userData) {
-                if (error) {
-                    $("#load").css("display","none");
-                    alert("Nao foi possivel salvar: "+error);
-                } else {
-                    ref.child("fornecedores").child(userData.uid).set({
-                        email: $("#email").val(),
-                        logo: $("#arquivoLogo").val().replace(/ /g,"").toLowerCase(),
-                        nome: $("#nome").val()
-                    },function(error) {
-                        $("#load").css("display","none");
-                        if (error) {
-                          alert("Nao foi possivel salvar. Erro: " + error);
-                        } else {
-                            alert("Seus dados foram salvos!");
-                        }
-                    });
-                }
-        });
-    }
-</script>
-<script> 
-    $(function(){
-      $("#rod").load("rod.html"); 
-    });
-</script>
+                </div>
+                <!--  <div class="checkbox">
+                    <label>
+                      <input type="checkbox"> Check me out
+                    </label>
+                  </div>-->
+            </form>    
+
+            <form id="formularioRecorte" method="post" action="upload.php?recorta">
+                <input type="button" value="finalizar recorte" onclick="recorta();">
+                <input type="hidden" name="imgLogo" id="imgLogo" />
+                <input type="hidden" id="x" name="x0" />
+                <input type="hidden" id="y" name="y0" />
+                <input type="hidden" id="w" name="w0" />
+                <input type="hidden" id="h" name="h0" />
+                <div id="jcrop" style="float:left;margin-right:30px">
+                    <img src="" id="logo">
+                </div>
+            </form>
+
+            <form action="upload.php" enctype="multipart/form-data" method="post" id="formularioUpload">        
+                <input type="file" id="arquivoLogo" name="arquivoLogo" onchange="envia();" style="visibility:hidden">
+            </form>
+            <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
+        </div>    
+        <div id="rod"></div>
+
+        <script>
+            function cabecalhoRodape() {
+                $("#cab").load("cab.html");
+                $("#rod").load("rod.html");
+            }
+            function cadastrar() {
+                $("#load").css("display", "block");
+                var ref = new Firebase("https://nasuakz.firebaseio.com/");
+                var nome = $("#nome").val().split(" ")[0];
+                nome = nome[0];
+                ref.createUser({
+                    email: $("#email").val(),
+                    password: $("#senha").val()
+                }, function (error, userData) {
+                    if (error) {
+                        $("#load").css("display", "none");
+                        alert("Nao foi possivel salvar: " + error);
+                    } else {
+                        ref.child("fornecedores").child(userData.uid).set({
+                            email: $("#email").val(),
+                            logo: $("#arquivoLogo").val().replace(/ /g, "").toLowerCase(),
+                            nome: $("#nome").val()
+                        }, function (error) {
+                            $("#load").css("display", "none");
+                            if (error) {
+                                alert("Nao foi possivel salvar. Erro: " + error);
+                            } else {
+                                alert("Seus dados foram salvos!");
+                            }
+                        });
+                    }
+                });
+            }
+            function envia() {
+                $.ajax({
+                    type: 'POST',
+                    url: 'upload.php',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: new FormData($('#formularioUpload').get(0)),
+                    beforeSend: function (xhr) {
+                        $("#load").css("display", "block");
+                    },
+                    success: function (data) {
+                        atualiza();
+                        jcropia();
+                        $("#load").css("display", "none");
+                    }
+                });
+            }
+            function atualiza() {
+                $('#jcrop').html("<img src='' id='logo'>");
+                $("#logo").attr("src", "img/logo/" + $("#arquivoLogo").val() + "?" + Math.random());
+                $('#imgLogo').attr('value', "img/logo/" + $("#arquivoLogo").val());
+            }
+            function jcropia() {
+                $('#logo').Jcrop({
+                    onChange: coordenadas,
+                    minSize: [288, 288],
+                    aspectRatio: 288 / 288,
+                    setSelect: [50, 50, 100, 100],
+                    bgColor: 'transparent'
+                });
+            }
+            /*window.onload=function(){*/
+            function coordenadas(c) {
+                $('#x').val(Math.round(c.x));
+                $('#y').val(Math.round(c.y));
+                $('#w').val(Math.round(c.w));
+                $('#h').val(Math.round(c.h));
+            }
+            ;
+            /*}*/
+            function recorta() {
+                $("#load").css("display", "block");
+                $.ajax({
+                    type: 'POST',
+                    url: 'upload.php?recorta',
+                    processData: false,
+                    contentType: false,
+                    data: new FormData($('#formularioRecorte').get(0)),
+                    success: function (data) {
+                        $('#jcrop').html("<img src='' id='logo'>");
+                        $("#logo").attr("src", "img/logo/" + $("#arquivoLogo").val().replace(/ /g, "").toLowerCase() + "?" + Math.random());
+                    }
+                });
+                $("#load").css("display", "none");
+            }
+        </script>
+        <script src="js/jquery-1.11.2.min.js"></script>
+        <script src="js/jquery.Jcrop.js"></script>
+        <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>

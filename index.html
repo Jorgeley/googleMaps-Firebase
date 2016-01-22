@@ -1,51 +1,60 @@
-<script src="js/jquery-1.11.2.min.js"></script>
-<script> 
-    $(function(){
-      $("#cab").load("cab.html"); 
-    });
-</script>
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="bootstrap-3.3.6/favicon.ico">
+        <title>NaSuaKZ-0.1(beta)</title>
+        <link href="bootstrap-3.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/signin.css" rel="stylesheet">
+    </head>
+    <body onload="cabecalhoRodape();">
+        <div id="cab"></div>
+        <form class="form-signin">
+            <h2 class="form-signin-heading"></h2>
+            <label for="inputEmail" class="sr-only">E-mail</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
+            <label for="inputPassword" class="sr-only">Senha</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me"> Lembre-me
+                </label>
+                <label style="margin-right:auto">
+                    <a href="novoUsuario.html">cadastre-se</a>
+                </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="button" OnClick="login();">Entrar</button>
+        </form>
+        <div id="rod"></div>
 
-<div id="cab"></div>
-<form class="form-signin">
-  <h2 class="form-signin-heading"></h2>
-  <label for="inputEmail" class="sr-only">E-mail</label>
-  <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
-  <label for="inputPassword" class="sr-only">Senha</label>
-  <input type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" value="remember-me"> Lembre-me
-    </label>
-      <label style="margin-right:auto">
-          <a href="novoUsuario.html">cadastre-se</a>
-      </label>
-  </div>
-  <button class="btn btn-lg btn-primary btn-block" type="button" OnClick="login();">Entrar</button>
-</form>
-<div id="rod"></div>
-
-<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
-<script>
-    function login(){
-        $("#load").css("display","block");
-        var ref = new Firebase("https://nasuakz.firebaseio.com/");
-        function authHandler(error, authData) {
-          $("#load").css("display","none");
-          if (error) {
-            alert("Usuário ou senha inválidos: "+error);
-          } else {
-            alert("Seja bem vindo "+authData.nome);
-            location.href = "principal.html";
-          }
-        }
-        ref.authWithPassword({
-            email    : $("#inputEmail").val(),
-            password : $("#inputPassword").val()
-        }, authHandler);
-    }
-</script>
-<script> 
-    $(function(){
-      $("#rod").load("rod.html"); 
-    });
-</script>
+        <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+        <script>
+              function cabecalhoRodape() {
+                  $("#cab").load("cab.html");
+                  $("#rod").load("rod.html");
+              }
+              function login() {
+                  $("#load").css("display", "block");
+                  var ref = new Firebase("https://nasuakz.firebaseio.com/");
+                  function authHandler(error, authData) {
+                      $("#load").css("display", "none");
+                      if (error) {
+                          alert("Usuário ou senha inválidos: " + error);
+                      } else {
+                          alert("Seja bem vindo " + authData.nome);
+                          location.href = "principal.html";
+                      }
+                  }
+                  ref.authWithPassword({
+                      email: $("#inputEmail").val(),
+                      password: $("#inputPassword").val()
+                  }, authHandler);
+              }
+        </script>
+        <script src="js/jquery-1.11.2.min.js"></script>
+    </body>
+</html>

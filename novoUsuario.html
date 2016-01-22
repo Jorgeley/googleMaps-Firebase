@@ -119,7 +119,7 @@
                 } else {
                     ref.child("fornecedores").child(userData.uid).set({
                         email: $("#email").val(),
-                        logo: $("#imgLogo").attr("value"),
+                        logo: $("#arquivoLogo").val(),
                         nome: $("#nome").val()
                     },function(error) {
                         $("#load").css("display","none");

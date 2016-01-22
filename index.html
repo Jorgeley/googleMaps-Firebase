@@ -33,8 +33,9 @@
           $("#load").css("display","none");
           if (error) {
             alert("Usuário ou senha inválidos: "+error);
-          } else {            
-            //alert("Authenticated successfully with payload: "+authData);
+          } else {
+            alert("Seja bem vindo "+authData.nome);
+            location.href = "principal.html";
           }
         }
         ref.authWithPassword({

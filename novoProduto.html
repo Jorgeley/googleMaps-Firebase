@@ -16,22 +16,22 @@
         <div style="width:50%;margin-right:auto;margin-left:auto">
             <form>
                 <div class="form-group">
-                    <label for="nome">Razao Social/Fantasia</label>
-                    <input type="text" class="form-control" id="nome" placeholder="Nome da sua empresa">
+                    <label for="nome">Nome</label>
+                    <input type="text" class="form-control" id="nome" placeholder="Nome do produto">
                 </div>
                 <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" class="form-control" id="email" placeholder="Email">
+                    <label for="descricao">Descrição</label>
+                    <textarea class="form-control" id="descricao" placeholder="Detalhe o produto"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" class="form-control" id="senha" placeholder="Senha">
+                    <label for="preco">Preço (com desconto para o representante)</label>
+                    <input type="text" class="form-control" id="preco" placeholder="Preço">
                 </div>
                 <div class="form-group">
-                    <label for="logo">Logo</label>
+                    <label for="img">Foto</label>
 
-                    <a href="#" onClick="$('#arquivoLogo').click();" id="addLogo">+adicionar logo</a>
-                    <p class="help-block">Logo da sua empresa.</p>
+                    <a href="#" onClick="$('#arquivoProduto').click();" id="addImg">+adicionar foto</a>
+                    <p class="help-block">Foto do produto.</p>
 
                 </div>
                 <!--  <div class="checkbox">
@@ -43,18 +43,18 @@
 
             <form id="formularioRecorte" method="post" action="upload.php?recorta">
                 <input type="button" value="finalizar recorte" onclick="recorta();">
-                <input type="hidden" name="imgLogo" id="imgLogo" />
+                <input type="hidden" name="imgProduto" id="imgLogo" />
                 <input type="hidden" id="x" name="x0" />
                 <input type="hidden" id="y" name="y0" />
                 <input type="hidden" id="w" name="w0" />
                 <input type="hidden" id="h" name="h0" />
                 <div id="jcrop" style="float:left;margin-right:30px">
-                    <img src="" id="logo">
+                    <img src="" id="produto">
                 </div>
             </form>
 
             <form action="upload.php" enctype="multipart/form-data" method="post" id="formularioUpload">        
-                <input type="file" id="arquivoLogo" name="arquivoLogo" onchange="envia();" style="visibility:hidden">
+                <input type="file" id="arquivoProduto" name="arquivoProduto" onchange="envia();" style="visibility:hidden">
             </form>
             <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
         </div>    
@@ -68,18 +68,20 @@
             function cadastrar() {
                 $("#load").css("display", "block");
                 var ref = new Firebase("https://nasuakz.firebaseio.com/");
-                ref.createUser({
-                    email: $("#email").val(),
-                    password: $("#senha").val()
-                }, function (error, userData) {
+                var produto = ref.child("produtos").push();
+                produto.set({
+                    nome: $("#nome").val(),
+                    descricao: $("#descricao").val(),
+                    preco: $("#preco").val(),
+                    foto: $("#arquivoProduto").val().replace(/ /g, "").toLowerCase(),
+                }, function (error) {
+                    $("#load").css("display", "none");
                     if (error) {
-                        $("#load").css("display", "none");
-                        alert("Nao foi possivel salvar: " + error);
+                        alert("Nao foi possivel salvar. Erro: " + error);
                     } else {
-                        ref.child("fornecedores").child(userData.uid).set({
-                            email: $("#email").val(),
-                            logo: $("#arquivoLogo").val().replace(/ /g, "").toLowerCase(),
-                            nome: $("#nome").val()
+                        var authData = ref.getAuth();
+                        ref.child("fornecedores").child(authData.uid).child("produtos").set({                            
+                            [produto.key()]: true
                         }, function (error) {
                             $("#load").css("display", "none");
                             if (error) {
@@ -110,12 +112,12 @@
                 });
             }
             function atualiza() {
-                $('#jcrop').html("<img src='' id='logo'>");
-                $("#logo").attr("src", "img/logo/" + $("#arquivoLogo").val() + "?" + Math.random());
-                $('#imgLogo').attr('value', "img/logo/" + $("#arquivoLogo").val());
+                $('#jcrop').html("<img src='' id='produto'>");
+                $("#produto").attr("src", "img/produtos/" + $("#arquivoProduto").val() + "?" + Math.random());
+                $('#imgProduto').attr('value', "img/produtos/" + $("#arquivoProduto").val());
             }
             function jcropia() {
-                $('#logo').Jcrop({
+                $('#produto').Jcrop({
                     onChange: coordenadas,
                     minSize: [288, 288],
                     aspectRatio: 288 / 288,
@@ -141,8 +143,8 @@
                     contentType: false,
                     data: new FormData($('#formularioRecorte').get(0)),
                     success: function (data) {
-                        $('#jcrop').html("<img src='' id='logo'>");
-                        $("#logo").attr("src", "img/logo/" + $("#arquivoLogo").val().replace(/ /g, "").toLowerCase() + "?" + Math.random());
+                        $('#jcrop').html("<img src='' id='produto'>");
+                        $("#produto").attr("src", "img/produtos/" + $("#arquivoProduto").val().replace(/ /g, "").toLowerCase() + "?" + Math.random());
                     }
                 });
                 $("#load").css("display", "none");

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SkyVants Maps - 0.1(beta)</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #mapa {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mapa"></div>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script>
+    function iniciaMapa() {
+        mapa = new google.maps.Map(document.getElementById('mapa'), {
+          center: {lat: -17.7913301, lng: -50.9322535},
+          zoom: 14
+        });
+        ref = new Firebase("https://skyvants.firebaseio.com/");
+        ref.child("marcadoresMapa").once("value", function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var marcadorSnapshot = childSnapshot.val();
+                var latLng = new google.maps.LatLng( marcadorSnapshot.latitude, marcadorSnapshot.longitude);
+                var marcador = new google.maps.Marker({
+                  position: latLng,
+                  map: mapa
+                });
+                var info = new google.maps.InfoWindow({
+                      content: "<div class='marcador'>" +marcadorSnapshot.nome+ "</div>"
+                  });
+                marcador.addListener('click', function() {
+                    location.href = marcadorSnapshot.link;
+                });
+                google.maps.event.addListener(marcador, 'mouseover', function() {
+                    info.close(mapa,this);
+                    info.open(mapa,this);
+                });
+                google.maps.event.addListener(marcador, 'mouseout', function() {
+                    window.setTimeout(function() {
+                        info.close(mapa,this);
+                    },3000);
+                });
+            });
+        });
+    }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMoJ4_k4ddqPi02MgCpdkP4AuUTlk2F34&callback=iniciaMapa"
+    async defer></script>
+    <script src="js/jquery-1.11.2.min.js" async defer></script>
+
+  </body>
+</html>

@@ -7,7 +7,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="bootstrap-3.3.6/favicon.ico">
-        <title>NaSuaKZ-0.1(beta)</title>
+        <title>SkyVants Maps - 0.1(beta)</title>
         <link href="bootstrap-3.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="css/signin.css" rel="stylesheet">
     </head>
@@ -19,14 +19,14 @@
             <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required autofocus>
             <label for="inputPassword" class="sr-only">Senha</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
-            <div class="checkbox">
+<!--            <div class="checkbox">
                 <label>
                     <input type="checkbox" value="remember-me"> Lembre-me
                 </label>
                 <label style="margin-right:auto">
                     <a href="novoUsuario.html">cadastre-se</a>
                 </label>
-            </div>
+            </div>-->
             <button class="btn btn-lg btn-primary btn-block" type="button" OnClick="login();">Entrar</button>
         </form>
         <div id="rod"></div>
@@ -39,14 +39,14 @@
               }
               function login() {
                   $("#load").css("display", "block");
-                  var ref = new Firebase("https://nasuakz.firebaseio.com/");
+                  var ref = new Firebase("https://skyvants.firebaseIO.com");
                   function authHandler(error, authData) {
                       $("#load").css("display", "none");
                       if (error) {
                           alert("Usuário ou senha inválidos: " + error);
                       } else {
                           alert("Seja bem vindo " + authData.nome);
-                          location.href = "principal.html";
+                          location.href = "marcadoresMapa.html";
                       }
                   }
                   ref.authWithPassword({

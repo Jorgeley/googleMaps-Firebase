@@ -22,7 +22,7 @@
     function iniciaMapa() {
         mapa = new google.maps.Map(document.getElementById('mapa'), {
           center: {lat: -17.7913301, lng: -50.9322535},
-          zoom: 14
+          zoom: 13
         });
         ref = new Firebase("https://skyvants.firebaseio.com/");
         ref.child("marcadoresMapa").once("value", function(snapshot) {

@@ -27,6 +27,7 @@
         <div id="cab"></div>
         <div style="width:50%;margin-right:auto;margin-left:auto">
             <form>
+                <input type="hidden" name="chave" id="chave">
                 <div class="form-group">
                     <label for="nome">Nome marcador</label>
                     <input type="text" class="form-control" id="nome" placeholder="Nome que aparecerá sobre o marcador no mapa">
@@ -38,7 +39,7 @@
                 <input type="hidden" name="latitude" id="latitude">
                 <input type="hidden" name="longitude" id="longitude">
             </form>
-            <button type="button" class="btn btn-default" OnClick="cadastrar();">Cadastrar</button>
+            <button type="button" class="btn btn-default" OnClick="salvar();">Salvar</button>
         </div>
                     <label>Marque no mapa a localização</label>
                     <div id="mapa"></div>
@@ -62,6 +63,8 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>Link</th>
+                                    <th>Latitude</th>
+                                    <th>Longitude</th>
                                     <th colspan="2"></th>
                                 </tr>
                             </thead>
@@ -77,6 +80,7 @@
 
         <script>
             var ref;
+            var mapa;
             function cabecalhoRodape() {
                 $("#cab").load("cab.html");
                 $("#rod").load("rod.html");
@@ -85,37 +89,77 @@
                     snapshot.forEach(function(childSnapshot) {
                         var marcador = childSnapshot.val();
                         $("table > tbody:last-child")
-                                .append("<tr><td>" + marcador.nome 
-                                    + "</td><td>" + marcador.link + "</td><td>" 
-                                    + "<a href='#'>[excluir]</a>&nbsp<a href='#'>[alterar]</a></td></tr>");
+                                .append("<tr><td>" + marcador.nome + "</td><td>"
+                                                + marcador.link + "</td><td>"
+                                                + marcador.latitude + "</td><td>"
+                                                + marcador.longitude + "</td><td>"
+                                    + "<a href='#' OnClick='excluir(\""+childSnapshot.key()+"\");'>[excluir]</a>&nbsp"
+                                    + "<a href='#' OnClick='alterar(\""+childSnapshot.key()+"\");'>[alterar]</a></td></tr>");
                         //console.log(marcador.nome + "->" + marcador.link);
                     });
                 }, function (errorObject) {
                     console.log("The read failed: " + errorObject.code);
                 });
             }
-            function cadastrar() {
+            var resultado = function (error){
+                $("#load").css("display", "none");
+                if (error) {
+                    alert("Nao foi possivel salvar. Erro: " + error);
+                } else {
+                    alert("Seus dados foram salvos");
+                }
+            };
+            function salvar(){
                 $("#load").css("display", "block");
                 var marcadores = ref.child("marcadoresMapa");
-                marcadores.push({
-                    nome: $("#nome").val(),
-                    link: $("#link").val(),
-                    latitude: $("#latitude").val(),
-                    longitude: $("#longitude").val(),
-                }, function (error) {
-                    $("#load").css("display", "none");
-                    if (error) {
-                        alert("Nao foi possivel salvar. Erro: " + error);
-                    } else {
-                        alert("Seus dados foram salvos");
-                    }
-                });
-                ref.child("marcadoresMapa").once('child_added', function(childSnapshot, prevChildKey) {
-                    var marcador = childSnapshot.val();
-                    $("table > tbody:last-child")
-                            .append("<tr><td>" + marcador.nome 
-                                + "</td><td>" + marcador.link + "</td><td>" 
-                                + "<a href='#'>excluir</a><|><a href='#'>alterar</a></td></tr>");
+                if ($("#chave").val() != ""){
+                    alert("nao null");
+                    marcadores.child($("#chave").val()).set({
+                        nome: $("#nome").val(),
+                        link: $("#link").val(),
+                        latitude: $("#latitude").val(),
+                        longitude: $("#longitude").val(),
+                    }, resultado);
+                    $("table > tbody").empty();
+                    cabecalhoRodape();
+                }else{
+                    alert("null");
+                    marcadores.push({
+                        nome: $("#nome").val(),
+                        link: $("#link").val(),
+                        latitude: $("#latitude").val(),
+                        longitude: $("#longitude").val(),
+                    }, resultado);
+                    ref.child("marcadoresMapa").once('child_added', function(childSnapshot, prevChildKey) {
+                        var marcador = childSnapshot.val();
+                        $("table > tbody:last-child")
+                                .append("<tr><td>" + marcador.nome 
+                                    + "</td><td>" + marcador.link + "</td><td>" 
+                                    + "<a href='#'>excluir</a><|><a href='#'>alterar</a></td></tr>");
+                    });
+                }
+            }
+            function excluir(chave){
+                if (confirm("Tem certeza?")){
+                    ref.child("marcadoresMapa/"+chave).remove(function(error){
+                        if (error){
+                            alert("não foi possível excluir");
+                        }else{
+                            alert("marcador excluido!");
+                            $("table > tbody").empty();
+                            cabecalhoRodape();
+                        }
+                    });
+                }
+            }
+            function alterar(chave){
+                ref.child("marcadoresMapa/"+chave).once("value", function(snapshot) {
+                    var marcador = snapshot.val();
+                    $("#chave").val(chave);
+                    $("#nome").val(marcador.nome);
+                    $("#link").val(marcador.link);
+                    var posicao = new google.maps.LatLng(marcador.latitude, marcador.longitude);
+                    marcaLocalizacao(posicao, mapa);
                 });
             }
             function iniciaMapa(){

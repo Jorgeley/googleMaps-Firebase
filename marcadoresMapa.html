@@ -113,7 +113,6 @@
                 $("#load").css("display", "block");
                 var marcadores = ref.child("marcadoresMapa");
                 if ($("#chave").val() != ""){
-                    alert("nao null");
                     marcadores.child($("#chave").val()).set({
                         nome: $("#nome").val(),
                         link: $("#link").val(),
@@ -123,7 +122,6 @@
                     $("table > tbody").empty();
                     cabecalhoRodape();
                 }else{
-                    alert("null");
                     marcadores.push({
                         nome: $("#nome").val(),
                         link: $("#link").val(),

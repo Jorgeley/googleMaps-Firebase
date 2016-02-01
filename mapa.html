@@ -16,38 +16,44 @@
     </style>
   </head>
   <body>
+      <a onclick="iniciaMapa('terreno');" style="text-decoration: none" href="#"><img src="img/terreno.png" id="terreno"></a><label for="terreno">Terreno</label>&nbsp;&nbsp;
+      <a onclick="iniciaMapa('casa');" style="text-decoration: none" href="#"><img src="img/casa.png" id="casa"></a><label for="casa">Casa</label>&nbsp;&nbsp;
+      <a onclick="iniciaMapa('apartamento');" style="text-decoration: none" href="#"><img src="img/apartamento.png" id="apartamento"></a><label for="apartamento">Apartamento</label>&nbsp;&nbsp;
     <div id="mapa"></div>
     <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
     <script>
-    function iniciaMapa() {
+    function iniciaMapa(filtro="todos") {
         mapa = new google.maps.Map(document.getElementById('mapa'), {
           center: {lat: -17.7913301, lng: -50.9322535},
-          zoom: 13
+          zoom: 13,
         });
         ref = new Firebase("https://skyvants.firebaseio.com/");
         ref.child("marcadoresMapa").once("value", function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
                 var marcadorSnapshot = childSnapshot.val();
-                var latLng = new google.maps.LatLng( marcadorSnapshot.latitude, marcadorSnapshot.longitude);
-                var marcador = new google.maps.Marker({
-                  position: latLng,
-                  map: mapa
-                });
-                var info = new google.maps.InfoWindow({
-                      content: "<div class='marcador'>" +marcadorSnapshot.nome+ "</div>"
-                  });
-                marcador.addListener('click', function() {
-                    location.href = marcadorSnapshot.link;
-                });
-                google.maps.event.addListener(marcador, 'mouseover', function() {
-                    info.close(mapa,this);
-                    info.open(mapa,this);
-                });
-                google.maps.event.addListener(marcador, 'mouseout', function() {
-                    window.setTimeout(function() {
+                if ( (marcadorSnapshot.tipo == filtro) || (filtro == "todos") ){
+                    var latLng = new google.maps.LatLng( marcadorSnapshot.latitude, marcadorSnapshot.longitude);
+                    var marcador = new google.maps.Marker({
+                      position: latLng,
+                      map: mapa,
+                      icon: "img/"+marcadorSnapshot.tipo+".png"
+                    });
+                    var info = new google.maps.InfoWindow({
+                          content: "<div class='marcador'>" +marcadorSnapshot.nome+ "</div>"
+                      });
+                    marcador.addListener('click', function() {
+                        location.href = marcadorSnapshot.link;
+                    });
+                    google.maps.event.addListener(marcador, 'mouseover', function() {
                         info.close(mapa,this);
-                    },3000);
-                });
+                        info.open(mapa,this);
+                    });
+                    google.maps.event.addListener(marcador, 'mouseout', function() {
+                        window.setTimeout(function() {
+                            info.close(mapa,this);
+                        },3000);
+                    });
+                }
             });
         });
     }

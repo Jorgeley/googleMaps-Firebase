@@ -36,6 +36,14 @@
                     <label for="link">Link</label>
                     <input type="url" class="form-control" id="link" placeholder="Endereço que o marcador abrirá ao clicar">
                 </div>
+                <div class="form-group">
+                    <input type="radio" name="tipo" value="terreno" id="terreno">
+                    <label for="terreno">Terreno</label>&nbsp;&nbsp;
+                    <input type="radio" name="tipo" value="casa" id="casa">
+                    <label for="casa">Casa</label>&nbsp;&nbsp;
+                    <input type="radio" name="tipo" value="apartamento" id="apartamento">
+                    <label for="apartamento">Apartamento</label>
+                </div>
                 <input type="hidden" name="latitude" id="latitude">
                 <input type="hidden" name="longitude" id="longitude">
             </form>
@@ -63,6 +71,7 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>Link</th>
+                                    <th>Tipo</th>
                                     <th>Latitude</th>
                                     <th>Longitude</th>
                                     <th colspan="2"></th>
@@ -91,6 +100,7 @@
                         $("table > tbody:last-child")
                                 .append("<tr><td>" + marcador.nome + "</td><td>"
                                                 + marcador.link + "</td><td>"
+                                                + marcador.tipo + "</td><td>"
                                                 + marcador.latitude + "</td><td>"
                                                 + marcador.longitude + "</td><td>"
                                     + "<a href='#' OnClick='excluir(\""+childSnapshot.key()+"\");'>[excluir]</a>&nbsp"
@@ -116,6 +126,7 @@
                     marcadores.child($("#chave").val()).set({
                         nome: $("#nome").val(),
                         link: $("#link").val(),
+                        tipo: $("input[name=tipo]:checked").val(),
                         latitude: $("#latitude").val(),
                         longitude: $("#longitude").val(),
                     }, resultado);
@@ -125,6 +136,7 @@
                     marcadores.push({
                         nome: $("#nome").val(),
                         link: $("#link").val(),
+                        tipo: $("input[name=tipo]:checked").val(),
                         latitude: $("#latitude").val(),
                         longitude: $("#longitude").val(),
                     }, resultado);
@@ -155,6 +167,12 @@
                     var marcador = snapshot.val();
                     $("#chave").val(chave);
                     $("#nome").val(marcador.nome);
+                    switch(marcador.tipo){
+                        case "terreno": $("#terreno").attr("checked", "checked"); break;
+                        case "casa": $("#casa").attr("checked", "checked"); break;
+                        case "apartamento": $("#apartamento").attr("checked", "checked"); break;
+                        default : null;
+                    }
                     $("#link").val(marcador.link);
                     var posicao = new google.maps.LatLng(marcador.latitude, marcador.longitude);
                     marcaLocalizacao(posicao, mapa);

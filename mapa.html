@@ -13,13 +13,25 @@
       #mapa {
         height: 100%;
       }
+      #info-box {
+        background-color: white;
+        border: 1px solid black;
+        bottom: 30px;
+        height: 20px;
+        padding: 10px;
+        position: absolute;
+        left: 30px;
+      }
     </style>
   </head>
   <body>
+      <div style="text-align:center">
       <a onclick="iniciaMapa('terreno');" style="text-decoration: none" href="#"><img src="img/terreno.png" id="terreno"></a><label for="terreno">Terreno</label>&nbsp;&nbsp;
       <a onclick="iniciaMapa('casa');" style="text-decoration: none" href="#"><img src="img/casa.png" id="casa"></a><label for="casa">Casa</label>&nbsp;&nbsp;
       <a onclick="iniciaMapa('apartamento');" style="text-decoration: none" href="#"><img src="img/apartamento.png" id="apartamento"></a><label for="apartamento">Apartamento</label>&nbsp;&nbsp;
+      </div>
     <div id="mapa"></div>
+    <div id="info-box"></div>
     <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
     <script>
     function iniciaMapa(filtro="todos") {
@@ -51,10 +63,29 @@
                     google.maps.event.addListener(marcador, 'mouseout', function() {
                         window.setTimeout(function() {
                             info.close(mapa,this);
-                        },3000);
+                        },1000);
                     });
                 }
             });
+        });
+        mapa.data.loadGeoJson("parqueLaranjeiras.json");
+        mapa.data.setStyle(function(feature) {
+          return /** @type {google.maps.Data.StyleOptions} */({
+            fillColor: feature.getProperty('color'),
+            strokeWeight: 1
+          });
+        });
+        mapa.data.addListener('mouseover', function(event) {
+          document.getElementById('info-box').textContent =
+              event.feature.getProperty('bairro');
+        });        
+        mapa.data.addListener('mouseout', function(event) {
+          document.getElementById('info-box').textContent = "";
+        });
+        mapa.data.addListener('click', function(event) {
+            var posicao = new google.maps.LatLng(event.feature.getProperty("latitude"), event.feature.getProperty("longitude"));
+            mapa.setCenter(posicao);
+            mapa.setZoom(17);
         });
     }
     </script>

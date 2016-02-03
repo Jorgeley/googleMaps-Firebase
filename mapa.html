@@ -45,9 +45,17 @@
                 var marcadorSnapshot = childSnapshot.val();
                 if ( (marcadorSnapshot.tipo == filtro) || (filtro == "todos") ){
                     var latLng = new google.maps.LatLng( marcadorSnapshot.latitude, marcadorSnapshot.longitude);
+                    /*switch(marcadorSnapshot.tipo){
+                        case "terreno": pinColor = "ff0000"; break;
+                        case "casa": pinColor = "ffff00"; break;
+                        case "apartamento": pinColor = "00ff00"; break;
+                        default : pinColor = "ff0000"; break;
+                    }
+                    var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor);*/
                     var marcador = new google.maps.Marker({
                       position: latLng,
                       map: mapa,
+                      //icon: pinImage
                       icon: "img/"+marcadorSnapshot.tipo+".png"
                     });
                     var info = new google.maps.InfoWindow({
@@ -68,30 +76,58 @@
                 }
             });
         });
-        mapa.data.loadGeoJson("parqueLaranjeiras.json");
-        mapa.data.setStyle(function(feature) {
-          return /** @type {google.maps.Data.StyleOptions} */({
-            fillColor: feature.getProperty('color'),
-            strokeWeight: 1
-          });
-        });
-        mapa.data.addListener('mouseover', function(event) {
-          document.getElementById('info-box').textContent =
-              event.feature.getProperty('bairro');
-        });        
-        mapa.data.addListener('mouseout', function(event) {
-          document.getElementById('info-box').textContent = "";
-        });
-        mapa.data.addListener('click', function(event) {
-            var posicao = new google.maps.LatLng(event.feature.getProperty("latitude"), event.feature.getProperty("longitude"));
-            mapa.setCenter(posicao);
-            mapa.setZoom(17);
-        });
+        $.each([
+            "parqueLaranjeiras.json",
+            "setorIndustrial.json",
+            "setorCentral.json",
+            "solarDoAgreste.json",
+            "jardimDasMargaridas.json",
+            "jardimPresidente.json",
+            "setorPausanes.json",
+            "parqueBandeirante.json",
+            "parqueDosBuritis.json",
+            "parqueDosBuritisII.json",
+            "vilaRenovacao.json",
+            "jardimAmerica.json",
+            "vilaAmalia.json",
+            "vilaBorges.json",
+            "vilaOlinda.json",
+            "vilaMeneses.json",
+            "jardimGoias.json",
+            "setorMoradaDoSol.json",
+            "setorUniversitario.json",
+            "popular.json"
+            ], function( indice, bairro ) {
+                    mapa.data.loadGeoJson(bairro);
+                    mapa.data.setStyle(function(feature) {
+                      return /** @type {google.maps.Data.StyleOptions} */({
+                        fillColor: feature.getProperty('color'),
+                        strokeWeight: 1
+                      });
+                    });
+                    mapa.data.addListener('mouseover', function(event) {
+                      $('#info-box').html(event.feature.getProperty('bairro'));
+                    });        
+                    mapa.data.addListener('mouseout', function(event) {
+                      $('#info-box').html("");
+                      //mapa.setZoom(13);
+                    });
+                    mapa.data.addListener('click', function(event) {
+                        var posicao = new google.maps.LatLng(event.feature.getProperty("latitude"), event.feature.getProperty("longitude"));
+                        mapa.setCenter(posicao);
+                        if (mapa.getZoom()==13)
+                            mapa.setZoom(17);
+                        else
+                            mapa.setZoom(13);                        
+                        event.stopPropagation();
+                    });
+                }
+        );
+        
     }
-    </script>
+    </script>    
+    <script src="js/jquery-1.11.2.min.js" async defer></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMoJ4_k4ddqPi02MgCpdkP4AuUTlk2F34&callback=iniciaMapa"
     async defer></script>
-    <script src="js/jquery-1.11.2.min.js" async defer></script>
-
   </body>
 </html>

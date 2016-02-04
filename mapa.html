@@ -2,11 +2,12 @@
 <html>
   <head>
     <title>SkyVants Maps - 0.1(beta)</title>
-    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta charset="utf-8">
     <style>
       html, body {
         height: 100%;
+        width: 100%;
         margin: 0;
         padding: 0;
       }
@@ -34,7 +35,8 @@
     <div id="info-box"></div>
     <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
     <script>
-    function iniciaMapa(filtro="todos") {
+    function iniciaMapa(filtro) {
+        filtro = typeof filro !== undefined ? filtro : "todos";
         mapa = new google.maps.Map(document.getElementById('mapa'), {
           center: {lat: -17.7913301, lng: -50.9322535},
           zoom: 13,
@@ -77,26 +79,26 @@
             });
         });
         $.each([
-            "parqueLaranjeiras.json",
-            "setorIndustrial.json",
-            "setorCentral.json",
-            "solarDoAgreste.json",
-            "jardimDasMargaridas.json",
-            "jardimPresidente.json",
-            "setorPausanes.json",
-            "parqueBandeirante.json",
-            "parqueDosBuritis.json",
-            "parqueDosBuritisII.json",
-            "vilaRenovacao.json",
-            "jardimAmerica.json",
-            "vilaAmalia.json",
-            "vilaBorges.json",
-            "vilaOlinda.json",
-            "vilaMeneses.json",
-            "jardimGoias.json",
-            "setorMoradaDoSol.json",
-            "setorUniversitario.json",
-            "popular.json"
+            "geolocalizacoes/parqueLaranjeiras.json",
+            "geolocalizacoes/setorIndustrial.json",
+            "geolocalizacoes/setorCentral.json",
+            "geolocalizacoes/solarDoAgreste.json",
+            "geolocalizacoes/jardimDasMargaridas.json",
+            "geolocalizacoes/jardimPresidente.json",
+            "geolocalizacoes/setorPausanes.json",
+            "geolocalizacoes/parqueBandeirante.json",
+            "geolocalizacoes/parqueDosBuritis.json",
+            "geolocalizacoes/parqueDosBuritisII.json",
+            "geolocalizacoes/vilaRenovacao.json",
+            "geolocalizacoes/jardimAmerica.json",
+            "geolocalizacoes/vilaAmalia.json",
+            "geolocalizacoes/vilaBorges.json",
+            "geolocalizacoes/vilaOlinda.json",
+            "geolocalizacoes/vilaMeneses.json",
+            "geolocalizacoes/jardimGoias.json",
+            "geolocalizacoes/setorMoradaDoSol.json",
+            "geolocalizacoes/setorUniversitario.json",
+            "geolocalizacoes/popular.json"
             ], function( indice, bairro ) {
                     mapa.data.loadGeoJson(bairro);
                     mapa.data.setStyle(function(feature) {
